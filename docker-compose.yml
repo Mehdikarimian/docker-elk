@@ -49,6 +49,23 @@ services:
     depends_on:
       - elasticsearch
 
+  filebeat:
+    build:
+      context: filebeat/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "5044:5044"
+    networks:
+      - elk
+    depends_on:
+      - logstash
+    
+
+
 networks:
 
   elk:

@@ -23,6 +23,7 @@ services:
     ports:
       - "5000:5000"
       - "9600:9600"
+      - "5044":"5044"
     configs:
       - source: logstash_config
         target: /usr/share/logstash/config/logstash.yml
@@ -49,6 +50,19 @@ services:
       mode: replicated
       replicas: 1
 
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:6.4.1
+    ports:
+      - "5044":"5044"
+    configs:
+      - source: filebeat_config
+        target: /user/share/filebeat/config/filebeat/yml
+    network:
+      - elk
+    deploy:
+      mode: replicated
+      replicas: 1
+
 configs:
 
   elastic_config:
@@ -59,6 +73,8 @@ configs:
     file: ./logstash/pipeline/logstash.conf
   kibana_config:
     file: ./kibana/config/kibana.yml
+  filebeat_config:
+    file: ./filebeat/filebeat.yml
 
 networks:
   elk:
