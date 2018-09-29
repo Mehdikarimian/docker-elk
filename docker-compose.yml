@@ -7,6 +7,7 @@ services:
       context: elasticsearch/
       args:
         ELK_VERSION: $ELK_VERSION
+    restart: unless-stopped
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     ports:
@@ -22,6 +23,7 @@ services:
       context: logstash/
       args:
         ELK_VERSION: $ELK_VERSION
+    restart: unless-stopped
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
       - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
@@ -40,6 +42,7 @@ services:
       context: kibana/
       args:
         ELK_VERSION: $ELK_VERSION
+    restart: unless-stopped
     volumes:
       - ./kibana/config/:/usr/share/kibana/config:ro
     ports:
@@ -48,21 +51,6 @@ services:
       - elk
     depends_on:
       - elasticsearch
-
-  filebeat:
-    build:
-      context: filebeat/
-      args:
-        ELK_VERSION: $ELK_VERSION
-    volumes:
-      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
-      - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - "5044:5044"
-    networks:
-      - elk
-    depends_on:
-      - logstash
     
 
 
